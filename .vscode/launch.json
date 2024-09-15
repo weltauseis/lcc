@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'lcc'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=lcc",
+                    "--package=lcc"
+                ],
+                "filter": {
+                    "name": "lcc",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "/home/kiwi/Programming/writing-a-c-compiler-tests/tests/chapter_1/valid/tabs.c"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'lcc'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=lcc",
+                    "--package=lcc"
+                ],
+                "filter": {
+                    "name": "lcc",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

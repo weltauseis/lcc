@@ -1,17 +1,13 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Token {
     Identifier(String),
-    Keyword(Keyword),
     Constant(i32),
     OpenParenthesis,
     CloseParenthesis,
     OpenBrace,
     CloseBrace,
     Semicolon,
-}
-
-#[derive(Debug)]
-pub enum Keyword {
+    // keywords
     Void,
     Return,
     Int,
@@ -49,15 +45,15 @@ pub fn lex(source_string: String) -> Vec<Token> {
                 };
                 match identifer_or_keyword.as_str() {
                     "int" => {
-                        tokens.push(Token::Keyword(Keyword::Int));
+                        tokens.push(Token::Int);
                         at += 3;
                     }
                     "void" => {
-                        tokens.push(Token::Keyword(Keyword::Void));
+                        tokens.push(Token::Void);
                         at += 4;
                     }
                     "return" => {
-                        tokens.push(Token::Keyword(Keyword::Return));
+                        tokens.push(Token::Return);
                         at += 6;
                     }
                     identifier => {
