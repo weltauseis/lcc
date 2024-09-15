@@ -1,0 +1,4 @@
+/target
+
+/programs/*
+!/programs/*.c
