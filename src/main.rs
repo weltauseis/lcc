@@ -1,7 +1,11 @@
 use std::fs;
 
+use assembly::generate_assembly;
+use emission::emit_code;
 use parser::parse;
 
+mod assembly;
+mod emission;
 mod lexer;
 mod parser;
 
@@ -57,7 +61,7 @@ fn run_driver(args: Vec<String>) {
     // 2.1 - Lexing
 
     let tokens: Vec<lexer::Token> = lexer::lex(preprocessed_source_string);
-    println!("{tokens:?}");
+    println!("Tokens :\n{tokens:?}");
     if option_lex {
         return;
     }
@@ -65,5 +69,46 @@ fn run_driver(args: Vec<String>) {
     // 2.2 - Parsing
 
     let ast = parse(tokens);
-    dbg!(ast);
+    println!("AST :\n{ast:#?}");
+    if option_parse {
+        return;
+    }
+
+    // 2.3 - Assembly Generation
+
+    let assembly_ast = generate_assembly(ast);
+    println!("Assembly AST :\n{assembly_ast:#?}");
+    if option_codegen {
+        return;
+    }
+
+    // 2.4 - Code Emission
+    let code = emit_code(assembly_ast);
+    let code_emission_file_name = c_source_file_name
+        .strip_suffix(".c")
+        .map(|s| format!("{}.s", s))
+        .expect("Input file is not a .c file !");
+
+    println!("Assembly:\n{code}");
+
+    std::fs::write(&code_emission_file_name, code).unwrap();
+
+    // 3 - Assemble and link the assembly file
+    let assembled_file_name = c_source_file_name
+        .strip_suffix(".c")
+        .expect("Input file is not a .c file !");
+
+    let assemble = std::process::Command::new("gcc")
+        .args([&code_emission_file_name, "-o", &assembled_file_name])
+        .output()
+        .expect("Failed to execute gcc for assembly and linking.");
+
+    fs::remove_file(&code_emission_file_name).unwrap();
+
+    if !assemble.status.success() {
+        panic!(
+            "Error during assembly : {}",
+            String::from_utf8_lossy(&assemble.stdout)
+        );
+    }
 }
